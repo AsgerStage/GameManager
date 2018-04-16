@@ -25,6 +25,7 @@ namespace WpfApp1
         //  public List<Program> programList { get; set; }
       
         public ObservableCollection<ListItem> programList = new ObservableCollection<ListItem>();
+        Utils utils = new Utils();
        
         public MainWindow()
         {
@@ -51,9 +52,10 @@ namespace WpfApp1
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-
-            
-            programList.Add(new ListItem() { Name = textBox1.Tag.ToString(), Path = textBox1.Text.ToString() });
+            ListItem newItem =new ListItem{ Name = textBox1.Tag.ToString(), Path = textBox1.Text.ToString() };
+            if (utils.checkForDuplicates(programList, newItem)==true){ programList.Add(newItem); }
+            else { Console.WriteLine("Duplicate Name or Path"); }
+           
   
         }
     }
