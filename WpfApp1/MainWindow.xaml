@@ -8,11 +8,11 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 
-        <ListView x:Name="ListView" HorizontalAlignment="Left" Height="366" Margin="10,-1,0,0" VerticalAlignment="Top" Width="772">
-        
+        <ListView x:Name="ListView" HorizontalAlignment="Left" Height="366" Margin="10,-1,0,0" VerticalAlignment="Top" Width="772" MouseDoubleClick="ListView_MouseDoubleClick">
+            
 
 
-                <ListView.View>
+            <ListView.View>
                     <GridView>
                         <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Program" Width="200"></GridViewColumn>
                         <GridViewColumn DisplayMemberBinding="{Binding Path}" Header="File Path" Width="600"></GridViewColumn>

@@ -52,11 +52,36 @@ namespace WpfApp1
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-            ListItem newItem =new ListItem{ Name = textBox1.Tag.ToString(), Path = textBox1.Text.ToString() };
+            try
+            {
+                ListItem newItem = new ListItem { Name = textBox1.Tag.ToString(), Path = textBox1.Text.ToString() };
+
             if (utils.checkForDuplicates(programList, newItem)==true){ programList.Add(newItem); }
             else { Console.WriteLine("Duplicate Name or Path"); }
-           
-  
+            }
+            catch (System.NullReferenceException)
+            {
+                Console.WriteLine("Nothing to import");
+            }
+
+
+        }
+        void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = ((FrameworkElement)e.OriginalSource).DataContext as ListItem;
+            if (item != null)
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(item.Path);
+
+                    Console.WriteLine("Program at "+item.Path+" executed");
+                }
+                catch(System.ComponentModel.Win32Exception)
+                {
+                    MessageBox.Show("Invalid path!");
+                }
+            }
         }
     }
 }
