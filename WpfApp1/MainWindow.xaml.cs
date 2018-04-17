@@ -50,30 +50,32 @@ namespace WpfApp1
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            string query = "INSERT INTO ProgramList (Name,Path) VALUES ('" + textBox1.Tag.ToString() + "','" + textBox1.Text.ToString() + "');";
+            Console.WriteLine(query);
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
-                ListItem newItem = new ListItem { Name = textBox1.Tag.ToString(), Path = textBox1.Text.ToString() };
-
-            if (utils.checkForDuplicates(programList, newItem)==true){ programList.Add(newItem); }
-            else { Console.WriteLine("Duplicate Name or Path"); }
-            }
-            catch (System.NullReferenceException)
-            {
-                Console.WriteLine("Nothing to import");
+                connection.Open();
+                command.ExecuteNonQuery();
             }
 
+            PopulateList();
+        
 
         }
         void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = ((FrameworkElement)e.OriginalSource).DataContext as ListItem;
+            
+            var item = ((FrameworkElement)e.OriginalSource).DataContext as DataRowView;
+
+           
             if (item != null)
             {
                 try
                 {
-                    System.Diagnostics.Process.Start(item.Path);
+                    System.Diagnostics.Process.Start(item["Path"].ToString());
 
-                    Console.WriteLine("Program at "+item.Path+" executed");
+                    Console.WriteLine("Program at "+ item["Path"].ToString() + " executed");
                 }
                 catch(System.ComponentModel.Win32Exception)
                 {
