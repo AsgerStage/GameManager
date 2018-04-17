@@ -1,19 +1,12 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Configuration;
+using System.Data;
 
 namespace WpfApp1
 {
@@ -26,16 +19,21 @@ namespace WpfApp1
       
         public ObservableCollection<ListItem> programList = new ObservableCollection<ListItem>();
         Utils utils = new Utils();
+        string connectionString;
+        SqlConnection connection;
        
         public MainWindow()
         {
+           
             InitializeComponent();
-            
+            connectionString = ConfigurationManager.ConnectionStrings["WpfApp1.Properties.Settings.DatabaseConnectionString"].ConnectionString;
             programList = new ObservableCollection<ListItem>();
             ListView.ItemsSource = programList;
 
-            programList.Add(new ListItem() { Name = "test", Path = "test/test" });
-        
+            //programList.Add(new ListItem() { Name = "test", Path = "test/test" });
+            PopulateList();
+          
+         
 
             DataContext = this;
         }
@@ -81,6 +79,20 @@ namespace WpfApp1
                 {
                     MessageBox.Show("Invalid path!");
                 }
+            }
+        }
+
+        private void PopulateList()
+        {
+            using (connection = new SqlConnection(connectionString))
+            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM ProgramList",connection))
+            {
+                connection.Open();
+                DataTable programTable = new DataTable();
+                adapter.Fill(programTable);
+                ListView.ItemsSource =programTable.DefaultView;
+
+
             }
         }
     }
