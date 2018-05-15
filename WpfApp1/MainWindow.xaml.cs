@@ -19,19 +19,23 @@ namespace WpfApp1
       
         public ObservableCollection<ListItem> programList = new ObservableCollection<ListItem>();
         Utils utils = new Utils();
-        string connectionString;
-        SqlConnection connection;
-       
+        private bool nonNumberEntered = false;
+
+
         public MainWindow()
         {
            
             InitializeComponent();
-            connectionString = ConfigurationManager.ConnectionStrings["WpfApp1.Properties.Settings.DatabaseConnectionString"].ConnectionString;
+            
             programList = new ObservableCollection<ListItem>();
+            ListView.Items.Clear();
+            ListView.ItemsSource = null;
             ListView.ItemsSource = programList;
 
             //programList.Add(new ListItem() { Name = "test", Path = "test/test" });
-            PopulateList();
+           
+            utils.PopulateList(ListView);
+            
           
          
 
@@ -50,16 +54,14 @@ namespace WpfApp1
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-            string query = "INSERT INTO ProgramList (Name,Path) VALUES ('" + textBox1.Tag.ToString() + "','" + textBox1.Text.ToString() + "');";
-            Console.WriteLine(query);
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+           
+           
             {
-                connection.Open();
-                command.ExecuteNonQuery();
+                utils.ImportToDB(textBox1.Tag.ToString(), textBox1.Text.ToString());
+                
             }
 
-            PopulateList();
+            utils.PopulateList(ListView);
         
 
         }
@@ -84,7 +86,7 @@ namespace WpfApp1
             }
         }
 
-        private void PopulateList()
+     /*   private void PopulateList()
         {
             using (connection = new SqlConnection(connectionString))
             using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM ProgramList",connection))
@@ -96,6 +98,33 @@ namespace WpfApp1
 
 
             }
+          
+        }*/
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                foreach (DataRowView eachItem in ListView.SelectedItems)
+                {
+                    //   utils.deleteFromDB(eachItem.Name);
+                utils.deleteFromDB((string) eachItem[2]);
+                 //   Console.WriteLine(eachItem.);
+
+                }
+                utils.PopulateList(ListView);
+            }
+
+            if ((Keyboard.Modifiers & ModifierKeys.Control)==ModifierKeys.Control)
+            {
+                e.Handled=true;
+            }
+            
         }
+
+
+
+      
     }
 }
+
