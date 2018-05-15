@@ -54,10 +54,13 @@ namespace WpfApp1
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-           
+          
            
             {
-                utils.ImportToDB(textBox1.Tag.ToString(), textBox1.Text.ToString());
+               if(!utils.ImportToDB(textBox1.Tag.ToString(), textBox1.Text.ToString()))
+                {
+                    MessageBox.Show("Duplicate path");
+                }
                 
             }
 

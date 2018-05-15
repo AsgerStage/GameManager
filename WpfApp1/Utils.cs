@@ -15,6 +15,7 @@ namespace WpfApp1
     {
         string connectionString;
       public SqlConnection connection;
+        SqlDataReader reader;
 
         public Utils()
         {
@@ -22,14 +23,26 @@ namespace WpfApp1
 
         }
 
-        public Boolean checkForDuplicates(ObservableCollection<ListItem> collection, ListItem newItem)
+        public Boolean hasDuplicates(string Path)
         {
-            for (int i = 0; i < collection.Count; i++)
+            Boolean result;
+            string query = "Select * FROM ProgramList WHERE Path = '"+Path+"'";
+            Console.WriteLine(query);
+            using (connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
-                if (collection.ElementAt(i).Name == newItem.Name) return false;
-                if (collection.ElementAt(i).Path == newItem.Path) return false;
+                command.CommandType = CommandType.Text;
+                connection.Open();
+
+
+                reader = command.ExecuteReader();
+
+              result= reader.HasRows;
+
+
             }
-            return true;
+
+            return result;
         }
 
 
@@ -47,18 +60,23 @@ namespace WpfApp1
 
         }
 
-        public void ImportToDB(string Name, string Path)
+        public Boolean ImportToDB(string Name, string Path)
         {
-            string query = "INSERT INTO ProgramList (Name,Path) VALUES ('" + Name + "','" + Path + "');";
-            Console.WriteLine(query);
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+            if (!hasDuplicates(Path))
             {
-                connection.Open();
-                command.ExecuteNonQuery();
+                string query = "INSERT INTO ProgramList (Name,Path) VALUES ('" + Name + "','" + Path + "');";
+                Console.WriteLine(query);
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+
+                return true;
             }
 
-
+            return false;
         }
 
         public void PopulateList(ListView lv)
