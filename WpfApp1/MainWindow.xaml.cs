@@ -19,7 +19,7 @@ namespace WpfApp1
       
         public ObservableCollection<ListItem> programList = new ObservableCollection<ListItem>();
         Utils utils = new Utils();
-        private bool nonNumberEntered = false;
+        
 
 
         public MainWindow()
@@ -86,31 +86,14 @@ namespace WpfApp1
             }
         }
 
-     /*   private void PopulateList()
-        {
-            using (connection = new SqlConnection(connectionString))
-            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM ProgramList",connection))
-            {
-                connection.Open();
-                DataTable programTable = new DataTable();
-                adapter.Fill(programTable);
-                ListView.ItemsSource =programTable.DefaultView;
-
-
-            }
-          
-        }*/
 
         private void OnKeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
                 foreach (DataRowView eachItem in ListView.SelectedItems)
-                {
-                    //   utils.deleteFromDB(eachItem.Name);
+                {     
                 utils.deleteFromDB((string) eachItem[2]);
-                 //   Console.WriteLine(eachItem.);
-
                 }
                 utils.PopulateList(ListView);
             }
